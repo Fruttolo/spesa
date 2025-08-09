@@ -1,0 +1,134 @@
+{% extends "home.html" %}
+{% block content %}
+<h2>Gestione Piatti</h2>
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filtri</h5>
+                <form method="GET" class="form-inline">
+                    <div class="form-group mx-2">
+                        <label for="tipo" class="mr-2">Tipo:</label>
+                        <select class="form-control" id="tipo" name="tipo">
+                            <option value="">Tutti</option>
+                            {% for tipo in tipi_piatto %}
+                            <option value="{{ tipo }}" {% if tipo == filtro_tipo %}selected{% endif %}>
+                                {{ tipo|title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mx-2">
+                        <label for="nome" class="mr-2">Nome:</label>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               value="{{ filtro_nome }}" placeholder="Cerca per nome">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cerca</button>
+                    {% if filtro_tipo or filtro_nome %}
+                    <a href="{{ url_for('piatti') }}" class="btn btn-secondary ml-2">Reset</a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Nuovo Piatto</h5>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select class="form-control" id="tipo" name="tipo">
+                            <option value="colazione">Colazione</option>
+                            <option value="pranzo">Pranzo</option>
+                            <option value="cena">Cena</option>
+                            <option value="spuntino">Spuntino</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aggiungi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h3>Lista Piatti</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in piatti %}
+                <tr>
+                    <td>{{ item.piatto.nome }}</td>
+                    <td>{{ item.piatto.tipo|title }}</td>
+                    <td>
+                        <a href="{{ url_for('piatto_ingredienti', id=item.piatto.id) }}" class="btn btn-sm btn-info">
+                            Gestisci Ingredienti
+                        </a>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
+                                data-target="#editModal{{ item.piatto.id }}">
+                            Modifica
+                        </button>
+                        {% if not item.is_used %}
+                        <form method="POST" action="{{ url_for('elimina_piatto', id=item.piatto.id) }}" 
+                              style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Sei sicuro di voler eliminare questo piatto?')">
+                                Elimina
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <!-- Modal per modifica -->
+                <div class="modal fade" id="editModal{{ item.piatto.id }}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modifica Piatto</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <form method="POST" action="{{ url_for('modifica_piatto', id=item.piatto.id) }}">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="nome">Nome</label>
+                                        <input type="text" class="form-control" id="nome" name="nome" 
+                                               value="{{ item.piatto.nome }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tipo">Tipo</label>
+                                        <select class="form-control" id="tipo" name="tipo">
+                                            <option value="colazione" {% if item.piatto.tipo == 'colazione' %}selected{% endif %}>Colazione</option>
+                                            <option value="pranzo" {% if item.piatto.tipo == 'pranzo' %}selected{% endif %}>Pranzo</option>
+                                            <option value="cena" {% if item.piatto.tipo == 'cena' %}selected{% endif %}>Cena</option>
+                                            <option value="spuntino" {% if item.piatto.tipo == 'spuntino' %}selected{% endif %}>Spuntino</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                    <button type="submit" class="btn btn-primary">Salva modifiche</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestore Spesa</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+        .select2-container .select2-selection--single {
+            height: calc(1.5em + .75rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: calc(1.5em + .75rem) !important;
+            padding-left: .75rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + .75rem) !important;
+            right: .25rem !important;
+        }
+        .select2-dropdown {
+            border: 1px solid #ced4da !important;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+        }
+        .select2-results__option {
+            padding: .375rem .75rem !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #007bff !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Gestore Spesa</a>
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/ingredienti">Ricerca Ingredienti</a>
+            <a class="nav-item nav-link" href="/piatti">Ricerca Piatti</a>
+            <a class="nav-item nav-link" href="/menu">Menu Settimanale</a>
+            <a class="nav-item nav-link" href="/lista_spesa">Lista della Spesa</a>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        {% block content %}
+        <h1>Benvenuto nel Gestore della Spesa</h1>
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ricerca Ingredienti</h5>
+                        <p class="card-text">Gestisci gli ingredienti e il loro stato in frigorifero.</p>
+                        <a href="/ingredienti" class="btn btn-primary">Vai</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ricerca Piatti</h5>
+                        <p class="card-text">Gestisci i piatti e i loro ingredienti.</p>
+                        <a href="/piatti" class="btn btn-primary">Vai</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Menu Settimanale</h5>
+                        <p class="card-text">Imposta il menu per la settimana.</p>
+                        <a href="/menu" class="btn btn-primary">Vai</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lista della Spesa</h5>
+                        <p class="card-text">Visualizza la lista della spesa generata.</p>
+                        <a href="/lista_spesa" class="btn btn-primary">Vai</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Inizializza select2 solo sulle select che hanno la classe select2-enable
+            $('.select2-enable').select2({
+                language: {
+                    noResults: function() {
+                        return "Nessun risultato trovato";
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

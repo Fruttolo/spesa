@@ -1,0 +1,144 @@
+{% extends "home.html" %}
+{% block content %}
+<h2>Menu Settimanale</h2>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <form method="POST" action="{{ url_for('svuota_menu') }}" style="display: inline;">
+            <button type="submit" class="btn btn-danger" 
+                    onclick="return confirm('Sei sicuro di voler svuotare il menu settimanale e gli spuntini?')">
+                Svuota Menu
+            </button>
+        </form>
+        <a href="{{ url_for('download_menu') }}" class="btn btn-success ml-2">
+            Scarica Menu
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Giorno</th>
+                    <th>Colazione</th>
+                    <th>Pranzo</th>
+                    <th>Cena</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for giorno in giorni %}
+                <tr>
+                    <td>{{ giorno }}</td>
+                    <td>
+                        {% if menu_settimanale[giorno] and menu_settimanale[giorno].colazione_id %}
+                            {{ menu_settimanale[giorno].colazione.nome }}
+                        {% else %}
+                            Non impostato
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if menu_settimanale[giorno] and menu_settimanale[giorno].pranzo_id %}
+                            {{ menu_settimanale[giorno].pranzo.nome }}
+                        {% else %}
+                            Non impostato
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if menu_settimanale[giorno] and menu_settimanale[giorno].cena_id %}
+                            {{ menu_settimanale[giorno].cena.nome }}
+                        {% else %}
+                            Non impostato
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
+                                data-target="#menuModal{{ giorno }}">
+                            Modifica
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Modal per ogni giorno -->
+                <div class="modal fade" id="menuModal{{ giorno }}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modifica Menu - {{ giorno }}</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <form method="POST">
+                                <div class="modal-body">
+                                    <input type="hidden" name="giorno" value="{{ giorno }}">
+                                    
+                                    <div class="form-group">
+                                        <label>Colazione</label>
+                                        <select name="colazione_id" class="form-control select2-enable">
+                                            <option value="">-- Seleziona --</option>
+                                            {% for piatto in piatti %}
+                                                {% if piatto.tipo == 'colazione' %}
+                                                <option value="{{ piatto.id }}"
+                                                    {% if menu_settimanale[giorno] and menu_settimanale[giorno].colazione_id == piatto.id %}
+                                                        selected
+                                                    {% endif %}
+                                                >{{ piatto.nome }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Pranzo</label>
+                                        <select name="pranzo_id" class="form-control select2-enable">
+                                            <option value="">-- Seleziona --</option>
+                                            {% for piatto in piatti %}
+                                                {% if piatto.tipo == 'pranzo' %}
+                                                <option value="{{ piatto.id }}"
+                                                    {% if menu_settimanale[giorno] and menu_settimanale[giorno].pranzo_id == piatto.id %}
+                                                        selected
+                                                    {% endif %}
+                                                >{{ piatto.nome }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Cena</label>
+                                        <select name="cena_id" class="form-control select2-enable">
+                                            <option value="">-- Seleziona --</option>
+                                            {% for piatto in piatti %}
+                                                {% if piatto.tipo == 'cena' %}
+                                                <option value="{{ piatto.id }}"
+                                                    {% if menu_settimanale[giorno] and menu_settimanale[giorno].cena_id == piatto.id %}
+                                                        selected
+                                                    {% endif %}
+                                                >{{ piatto.nome }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                    <button type="submit" class="btn btn-primary">Salva</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Spuntini Settimanali</h3>
+        <a href="/spuntini" class="btn btn-primary">Gestisci Spuntini</a>
+    </div>
+</div>
+{% endblock %}

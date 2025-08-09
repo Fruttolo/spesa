@@ -1,0 +1,154 @@
+{% extends "home.html" %}
+{% block content %}
+<h2>Gestione Ingredienti</h2>
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filtri</h5>
+                <form method="GET" class="form-inline">
+                    <div class="form-group mx-2">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="in_frigo" name="in_frigo" value="true"
+                                   {% if filtro_frigo == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="in_frigo">Solo ingredienti in frigo</label>
+                        </div>
+                    </div>
+                    <div class="form-group mx-2">
+                        <label for="nome" class="mr-2">Nome:</label>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               value="{{ filtro_nome }}" placeholder="Cerca per nome">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cerca</button>
+                    {% if filtro_frigo or filtro_nome %}
+                    <a href="{{ url_for('ingredienti') }}" class="btn btn-secondary ml-2">Reset</a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Nuovo Ingrediente</h5>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="in_frigo" name="in_frigo">
+                            <label class="form-check-label" for="in_frigo">Presente in frigo</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantita">Quantità in frigo</label>
+                        <input type="number" step="0.1" class="form-control" id="quantita" name="quantita" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="unita_misura">Unità di misura</label>
+                        <select class="form-control" id="unita_misura" name="unita_misura">
+                            <option value="g">Grammi</option>
+                            <option value="kg">Kilogrammi</option>
+                            <option value="ml">Millilitri</option>
+                            <option value="l">Litri</option>
+                            <option value="pz">Pezzi</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aggiungi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h3>Lista Ingredienti</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>In Frigo</th>
+                    <th>Quantità</th>
+                    <th>Unità</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ingredienti %}
+                <tr>
+                    <td>{{ item.ingrediente.nome }}</td>
+                    <td>{% if item.ingrediente.in_frigo %}Sì{% else %}No{% endif %}</td>
+                    <td>{{ item.ingrediente.quantita_in_frigo }}</td>
+                    <td>{{ item.ingrediente.unita_misura }}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
+                                data-target="#editModal{{ item.ingrediente.id }}">
+                            Modifica
+                        </button>
+                        {% if not item.is_used %}
+                        <form method="POST" action="{{ url_for('elimina_ingrediente', id=item.ingrediente.id) }}" 
+                              style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Sei sicuro di voler eliminare questo ingrediente?')">
+                                Elimina
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <!-- Modal per modifica -->
+                <div class="modal fade" id="editModal{{ item.ingrediente.id }}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modifica Ingrediente</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <form method="POST" action="{{ url_for('modifica_ingrediente', id=item.ingrediente.id) }}">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="nome">Nome</label>
+                                        <input type="text" class="form-control" id="nome" name="nome" 
+                                               value="{{ item.ingrediente.nome }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="in_frigo" name="in_frigo"
+                                                   {% if item.ingrediente.in_frigo %}checked{% endif %}>
+                                            <label class="form-check-label" for="in_frigo">Presente in frigo</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="quantita">Quantità in frigo</label>
+                                        <input type="number" step="0.1" class="form-control" id="quantita" name="quantita"
+                                               value="{{ item.ingrediente.quantita_in_frigo }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="unita_misura">Unità di misura</label>
+                                        <select class="form-control" id="unita_misura" name="unita_misura">
+                                            <option value="g" {% if item.ingrediente.unita_misura == 'g' %}selected{% endif %}>Grammi</option>
+                                            <option value="kg" {% if item.ingrediente.unita_misura == 'kg' %}selected{% endif %}>Kilogrammi</option>
+                                            <option value="ml" {% if item.ingrediente.unita_misura == 'ml' %}selected{% endif %}>Millilitri</option>
+                                            <option value="l" {% if item.ingrediente.unita_misura == 'l' %}selected{% endif %}>Litri</option>
+                                            <option value="pz" {% if item.ingrediente.unita_misura == 'pz' %}selected{% endif %}>Pezzi</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                    <button type="submit" class="btn btn-primary">Salva modifiche</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

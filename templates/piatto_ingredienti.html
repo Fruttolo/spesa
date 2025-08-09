@@ -1,0 +1,67 @@
+{% extends "home.html" %}
+{% block content %}
+<h2>Ingredienti per {{ piatto.nome }}</h2>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Aggiungi Ingrediente</h5>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="ingrediente_id">Ingrediente</label>
+                        <select class="form-control select2-enable" id="ingrediente_id" name="ingrediente_id" required>
+                            {% for ingrediente in ingredienti_disponibili %}
+                            <option value="{{ ingrediente.id }}">{{ ingrediente.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantita">Quantità</label>
+                        <input type="number" step="0.1" class="form-control" id="quantita" name="quantita" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unita_misura">Unità di misura</label>
+                        <select class="form-control" id="unita_misura" name="unita_misura">
+                            <option value="g">Grammi</option>
+                            <option value="kg">Kilogrammi</option>
+                            <option value="ml">Millilitri</option>
+                            <option value="l">Litri</option>
+                            <option value="pz">Pezzi</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aggiungi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h3>Ingredienti del piatto</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ingrediente</th>
+                    <th>Quantità</th>
+                    <th>Unità</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ing in ingredienti_piatto %}
+                <tr>
+                    <td>{{ ing.ingrediente.nome }}</td>
+                    <td>{{ ing.quantita }}</td>
+                    <td>{{ ing.unita_misura }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('elimina_ingrediente_da_piatto', piatto_id=piatto.id, ingrediente_id=ing.ingrediente.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Sei sicuro di voler eliminare questo ingrediente dal piatto?')">
+                                Elimina
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
