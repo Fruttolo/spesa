@@ -6,27 +6,33 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Filtri</h5>
-                <form method="GET" class="form-inline">
-                    <div class="form-group mx-2">
-                        <label for="tipo" class="mr-2">Tipo:</label>
-                        <select class="form-control" id="tipo" name="tipo">
-                            <option value="">Tutti</option>
-                            {% for tipo in tipi_piatto %}
-                            <option value="{{ tipo }}" {% if tipo == filtro_tipo %}selected{% endif %}>
-                                {{ tipo|title }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                <form method="GET">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4 mb-2">
+                            <label for="tipo">Tipo:</label>
+                            <select class="form-control" id="tipo" name="tipo">
+                                <option value="">Tutti</option>
+                                {% for tipo in tipi_piatto %}
+                                <option value="{{ tipo }}" {% if tipo == filtro_tipo %}selected{% endif %}>
+                                    {{ tipo|title }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-md-4 mb-2">
+                            <label for="nome">Nome:</label>
+                            <input type="text" class="form-control" id="nome" name="nome" 
+                                   value="{{ filtro_nome }}" placeholder="Cerca per nome">
+                        </div>
+                        <div class="col-sm-12 col-md-4 mb-2 d-flex align-items-end">
+                            <div>
+                                <button type="submit" class="btn btn-primary">Cerca</button>
+                                {% if filtro_tipo or filtro_nome %}
+                                <a href="{{ url_for('piatti') }}" class="btn btn-secondary ml-2">Reset</a>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group mx-2">
-                        <label for="nome" class="mr-2">Nome:</label>
-                        <input type="text" class="form-control" id="nome" name="nome" 
-                               value="{{ filtro_nome }}" placeholder="Cerca per nome">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Cerca</button>
-                    {% if filtro_tipo or filtro_nome %}
-                    <a href="{{ url_for('piatti') }}" class="btn btn-secondary ml-2">Reset</a>
-                    {% endif %}
                 </form>
             </div>
         </div>
@@ -56,79 +62,80 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-sm-12 col-md-8 mt-4 mb-4">
         <h3>Lista Piatti</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Tipo</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in piatti %}
-                <tr>
-                    <td>{{ item.piatto.nome }}</td>
-                    <td>{{ item.piatto.tipo|title }}</td>
-                    <td>
-                        <a href="{{ url_for('piatto_ingredienti', id=item.piatto.id) }}" class="btn btn-sm btn-info">
-                            Gestisci Ingredienti
-                        </a>
-                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
-                                data-target="#editModal{{ item.piatto.id }}">
-                            Modifica
-                        </button>
-                        {% if not item.is_used %}
-                        <form method="POST" action="{{ url_for('elimina_piatto', id=item.piatto.id) }}" 
-                              style="display: inline;">
-                            <button type="submit" class="btn btn-sm btn-danger" 
-                                    onclick="return confirm('Sei sicuro di voler eliminare questo piatto?')">
-                                Elimina
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in piatti %}
+                    <tr>
+                        <td>{{ item.piatto.nome }}</td>
+                        <td>{{ item.piatto.tipo|title }}</td>
+                        <td class="d-flex direction-row">
+                            <a href="{{ url_for('piatto_ingredienti', id=item.piatto.id) }}" class="btn btn-sm btn-info">
+                                Gestisci Ingredienti
+                            </a>
+                            <button type="button" class="btn btn-sm btn-primary mr-2 ml-2" data-toggle="modal" 
+                                    data-target="#editModal{{ item.piatto.id }}">
+                                Modifica
                             </button>
-                        </form>
-                        {% endif %}
-                    </td>
-                </tr>
-
-                <!-- Modal per modifica -->
-                <div class="modal fade" id="editModal{{ item.piatto.id }}" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Modifica Piatto</h5>
-                                <button type="button" class="close" data-dismiss="modal">
-                                    <span>&times;</span>
+                            {% if not item.is_used %}
+                            <form method="POST" action="{{ url_for('elimina_piatto', id=item.piatto.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Sei sicuro di voler eliminare questo piatto?')">
+                                    Elimina
                                 </button>
-                            </div>
-                            <form method="POST" action="{{ url_for('modifica_piatto', id=item.piatto.id) }}">
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="nome">Nome</label>
-                                        <input type="text" class="form-control" id="nome" name="nome" 
-                                               value="{{ item.piatto.nome }}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="tipo">Tipo</label>
-                                        <select class="form-control" id="tipo" name="tipo">
-                                            <option value="colazione" {% if item.piatto.tipo == 'colazione' %}selected{% endif %}>Colazione</option>
-                                            <option value="pranzo" {% if item.piatto.tipo == 'pranzo' %}selected{% endif %}>Pranzo</option>
-                                            <option value="cena" {% if item.piatto.tipo == 'cena' %}selected{% endif %}>Cena</option>
-                                            <option value="spuntino" {% if item.piatto.tipo == 'spuntino' %}selected{% endif %}>Spuntino</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                                    <button type="submit" class="btn btn-primary">Salva modifiche</button>
-                                </div>
                             </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+    
+                    <!-- Modal per modifica -->
+                    <div class="modal fade" id="editModal{{ item.piatto.id }}" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifica Piatto</h5>
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span>&times;</span>
+                                    </button>
+                                </div>
+                                <form method="POST" action="{{ url_for('modifica_piatto', id=item.piatto.id) }}">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="nome">Nome</label>
+                                            <input type="text" class="form-control" id="nome" name="nome" 
+                                                   value="{{ item.piatto.nome }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tipo">Tipo</label>
+                                            <select class="form-control" id="tipo" name="tipo">
+                                                <option value="colazione" {% if item.piatto.tipo == 'colazione' %}selected{% endif %}>Colazione</option>
+                                                <option value="pranzo" {% if item.piatto.tipo == 'pranzo' %}selected{% endif %}>Pranzo</option>
+                                                <option value="cena" {% if item.piatto.tipo == 'cena' %}selected{% endif %}>Cena</option>
+                                                <option value="spuntino" {% if item.piatto.tipo == 'spuntino' %}selected{% endif %}>Spuntino</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                        <button type="submit" class="btn btn-primary">Salva modifiche</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

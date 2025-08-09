@@ -16,38 +16,39 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Giorno</th>
-                    <th>Colazione</th>
-                    <th>Pranzo</th>
-                    <th>Cena</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for giorno in giorni %}
-                <tr>
-                    <td>{{ giorno }}</td>
-                    <td>
-                        {% if menu_settimanale[giorno] and menu_settimanale[giorno].colazione_id %}
-                            {{ menu_settimanale[giorno].colazione.nome }}
-                        {% else %}
-                            Non impostato
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if menu_settimanale[giorno] and menu_settimanale[giorno].pranzo_id %}
-                            {{ menu_settimanale[giorno].pranzo.nome }}
-                        {% else %}
-                            Non impostato
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if menu_settimanale[giorno] and menu_settimanale[giorno].cena_id %}
-                            {{ menu_settimanale[giorno].cena.nome }}
-                        {% else %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Giorno</th>
+                        <th>Colazione</th>
+                        <th>Pranzo</th>
+                        <th>Cena</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for giorno in giorni %}
+                    <tr>
+                        <td class="font-weight-bold">{{ giorno }}</td>
+                        <td>
+                            {% if menu_settimanale[giorno] and menu_settimanale[giorno].colazione_id %}
+                                {{ menu_settimanale[giorno].colazione.nome }}
+                            {% else %}
+                                <span class="text-muted">Non impostato</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if menu_settimanale[giorno] and menu_settimanale[giorno].pranzo_id %}
+                                {{ menu_settimanale[giorno].pranzo.nome }}
+                            {% else %}
+                                <span class="text-muted">Non impostato</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if menu_settimanale[giorno] and menu_settimanale[giorno].cena_id %}
+                                {{ menu_settimanale[giorno].cena.nome }}
+                            {% else %}
                             Non impostato
                         {% endif %}
                     </td>
@@ -135,7 +136,7 @@
     </div>
 </div>
 
-<div class="row mt-4">
+<div class="row mt-4 mb-4 ml-2">
     <div class="col-md-12">
         <h3>Spuntini Settimanali</h3>
         <a href="/spuntini" class="btn btn-primary">Gestisci Spuntini</a>

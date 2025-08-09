@@ -34,34 +34,36 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 mt-4 mb-4">
         <h3>Lista Spuntini</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Ingrediente</th>
-                    <th>Quantità</th>
-                    <th>Unità</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for spuntino in spuntini %}
-                <tr>
-                    <td>{{ spuntino.ingrediente.nome }}</td>
-                    <td>{{ spuntino.quantita }}</td>
-                    <td>{{ spuntino.unita_misura }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('elimina_spuntino', id=spuntino.id) }}" style="display: inline;">
-                            <button type="submit" class="btn btn-sm btn-danger" 
-                                    onclick="return confirm('Sei sicuro di voler eliminare questo spuntino?')">
-                                Elimina
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Ingrediente</th>
+                        <th>Quantità</th>
+                        <th>Unità</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for spuntino in spuntini %}
+                    <tr>
+                        <td>{{ spuntino.ingrediente.nome }}</td>
+                        <td>{{ spuntino.quantita }}</td>
+                        <td>{{ spuntino.unita_misura }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('elimina_spuntino', id=spuntino.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Sei sicuro di voler eliminare questo spuntino?')">
+                                    Elimina
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

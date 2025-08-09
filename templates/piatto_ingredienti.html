@@ -34,34 +34,36 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 mt-4 mb-4">
         <h3>Ingredienti del piatto</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Ingrediente</th>
-                    <th>Quantità</th>
-                    <th>Unità</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ing in ingredienti_piatto %}
-                <tr>
-                    <td>{{ ing.ingrediente.nome }}</td>
-                    <td>{{ ing.quantita }}</td>
-                    <td>{{ ing.unita_misura }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('elimina_ingrediente_da_piatto', piatto_id=piatto.id, ingrediente_id=ing.ingrediente.id) }}" style="display: inline;">
-                            <button type="submit" class="btn btn-sm btn-danger" 
-                                    onclick="return confirm('Sei sicuro di voler eliminare questo ingrediente dal piatto?')">
-                                Elimina
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Ingrediente</th>
+                        <th>Quantità</th>
+                        <th>Unità</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ing in ingredienti_piatto %}
+                    <tr>
+                        <td>{{ ing.ingrediente.nome }}</td>
+                        <td>{{ ing.quantita }}</td>
+                        <td>{{ ing.unita_misura }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('elimina_ingrediente_da_piatto', piatto_id=piatto.id, ingrediente_id=ing.ingrediente.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Sei sicuro di voler eliminare questo ingrediente dal piatto?')">
+                                    Elimina
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
