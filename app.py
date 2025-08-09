@@ -333,9 +333,12 @@ def download_lista_spesa():
     for item in lista_spesa_items:
         output.write(f"- {item['nome']}: {item['quantita']} {item['unita_misura']}\n")
     
-    output.seek(0)
+    # Convert the text to bytes and use BytesIO
+    output_bytes = BytesIO()
+    output_bytes.write(output.getvalue().encode('utf-8'))
+    output_bytes.seek(0)
     return send_file(
-        StringIO(output.getvalue()),
+        output_bytes,
         mimetype='text/plain',
         as_attachment=True,
         download_name='lista_spesa.txt'
@@ -385,7 +388,7 @@ def genera_lista_spesa():
                 'unita_misura': necessario['unita_misura']
             })
     
-    return render_template('lista_spesa.html', lista_spesa=lista_spesa)
+    return lista_spesa
 
 if __name__ == '__main__':
     with app.app_context():
